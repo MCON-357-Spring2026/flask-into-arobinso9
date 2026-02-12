@@ -1,6 +1,9 @@
 from flask import Flask, request, current_app,jsonify
 app = Flask(__name__)
 
+# server code
+# Server (Flask)->	Waits for requests and returns data. ->	@app.route("/")
+
 # Route 1: Welcome Endpoint
 @app.route("/", methods=['GET'])
 def welcome_endpoint():
