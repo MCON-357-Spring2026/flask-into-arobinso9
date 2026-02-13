@@ -106,7 +106,10 @@ def test_error_handling():
     url = 'http://127.0.0.1:5000/calculate?num1=abc&num2=5&operation=add'
     response = requests.get(url)
     print(f"Status Code: {response.status_code}")
-    print(f"Response: {response.json()}")
+    try:
+        print(f"Response JSON: {response.json()}")
+    except Exception:
+        print("Response contained HTML/Text (likely a crash page), not JSON.")
 
 # we need to call the test_functions we just created so they can interact with the Server
 if __name__ == "__main__":
