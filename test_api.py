@@ -2,6 +2,7 @@ import requests
 # client code
 # client will send in URL and will receive a response from the Server and will then format it
 # Client (Requests) ->	Sends requests and processes the data. ->	requests.get(...)
+# requests.get() -> returns a RESPONSE object which we use in the Client.
 
 
 def test_welcome_route():
@@ -24,6 +25,7 @@ def test_greeting_route():
     url = f'http://127.0.0.1:5000/greet/{name}'
     # we make the request, and request.get() returns the Response object which contains
     # the status code, headers, and the body.
+    # the response obj had a field: .text, .status_code, .url, .headers, .ok, .json() method...
     # response.json() takes the raw text from the server and converts it to a python dict
     response = requests.get(url)
 
@@ -49,6 +51,7 @@ def test_calculator_route():
     resp_div_zero = requests.get(f"{base_url}?num1=10&num2=0&operation=divide")
     if resp_div_zero.status_code == 400:
         print(f"Error: {resp_div_zero.json()['error']}")
+
 
 def test_echo_route():
     url = 'http://127.0.0.1:5000/echo'
@@ -76,4 +79,44 @@ def test_echo_route():
     elif response.status_code == 400:
         print(f"Error!!!! :( Received status code {response.status_code}")
 
-def diff_status_codes():
+def test_status_codes():
+    base_url = 'http://127.0.0.1:5000'
+
+    resp_200 = requests.get(f"{base_url}/calculate?num1=10&num2=2&operation=add")
+    print(f"Test 1 (Success) -> Status: {resp_200.status_code}, Text: {resp_200.text}")
+
+    resp_400 = requests.get(f"{base_url}/calculate?num1=10&num2=0&operation=divide")
+    print(f"Test 2 (User Error) -> Status: {resp_400.status_code}, Text: {resp_400.text}")
+
+    resp_404 = requests.get(f"{base_url}/random_url_i_made_up_lol")
+    print(f"Test 3 (Missing) -> Status: {resp_404.status_code}, Text: {resp_404.text}")
+
+def test_custom_header():
+    url = 'http://127.0.0.1:5000/'
+    response = requests.get(url)
+    custom_header = response.headers.get('X-Custom-Header')
+    print(f"Custom Header: {custom_header}")
+
+    if custom_header == 'FlaskRocks':
+        print("Success- Custom header matches;)")
+    else:
+        print("ERROR ALERT: Custom header missing or wrong.")
+
+def test_error_handling():
+    url = 'http://127.0.0.1:5000/calculate?num1=abc&num2=5&operation=add'
+    response = requests.get(url)
+    print(f"Status Code: {response.status_code}")
+    print(f"Response: {response.json()}")
+
+# we need to call the test_functions we just created so they can interact with the Server
+if __name__ == "__main__":
+    print("Starting Flask API Tests")
+    test_welcome_route()
+    test_about_route()
+    test_greeting_route()
+    test_calculator_route()
+    test_echo_route()
+    test_status_codes()
+    test_custom_header()
+    test_error_handling()
+    print("All tests executed!  WOOHOO :) :) :)")
